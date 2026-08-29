@@ -17,7 +17,7 @@ public sealed class AttioOpenApiHttpClient : IAttioOpenApiHttpClient
     private readonly IHttpClientCache _httpClientCache;
     private readonly IConfiguration _config;
 
-    private const string _prodBaseUrl = "https://api.groq.com";
+    private const string _prodBaseUrl = "https://api.attio.com";
 
     public AttioOpenApiHttpClient(IHttpClientCache httpClientCache, IConfiguration config)
     {

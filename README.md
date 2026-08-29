@@ -4,40 +4,60 @@
 
 # Soenneker.Attio.HttpClients
 
-A .NET thread-safe singleton HttpClient for.
+A DI-ready, cached `HttpClient` configured for authenticated requests to the Attio API.
 
-## Install
+## Installation
 
 ```bash
 dotnet add package Soenneker.Attio.HttpClients
 ```
 
-## Quick start
+## Configuration
 
-```csharp
-using Soenneker.Attio.HttpClients.Registrars;
-using Microsoft.Extensions.DependencyInjection;
+Add the API key to your configuration:
 
-var services = new ServiceCollection();
-var result = services.AddAttioOpenApiHttpClientAsSingleton();
+```json
+{
+  "Attio": {
+    "ApiKey": "your-attio-access-token"
+  }
+}
 ```
 
-Adds `AttioOpenApiHttpClient` as a singleton service.
+Requests use `https://api.attio.com` and this authentication header by default:
 
-## What you get
+```text
+Authorization: Bearer {ApiKey}
+```
 
-- `IAttioOpenApiHttpClient` — A .NET thread-safe singleton HttpClient for.
-- `AttioOpenApiHttpClientRegistrar` — Registers the OpenAPI HttpClient wrapper for dependency injection.
+For a compatible proxy or alternate authentication scheme, set `Attio:ClientBaseUrl`, `Attio:AuthHeaderName`, or `Attio:AuthHeaderValueTemplate`. The value template must contain `{token}` if the API key should be inserted.
 
-## API at a glance
+## Registration and use
 
-| API | What it does | Result / important behavior |
-| --- | --- | --- |
-| `AttioOpenApiHttpClientRegistrar.AddAttioOpenApiHttpClientAsSingleton(services)` | Adds `AttioOpenApiHttpClient` as a singleton service. | The same service collection, so additional registrations can be chained. |
-| `AttioOpenApiHttpClientRegistrar.AddAttioOpenApiHttpClientAsScoped(services)` | Adds `AttioOpenApiHttpClient` as a scoped service. | The same service collection, so additional registrations can be chained. |
+```csharp
+using Soenneker.Attio.HttpClients.Abstract;
+using Soenneker.Attio.HttpClients.Registrars;
 
-## Practical notes
+builder.Services.AddAttioOpenApiHttpClientAsSingleton();
 
-- Reuse the registered client instead of constructing one per operation.
-- Calls that return a cached or singleton value reuse the same instance until the owning service is disposed.
-- Dispose instances you own when their scope ends so held resources can be released.
+public sealed class AttioService(IAttioOpenApiHttpClient clientProvider)
+{
+    public async Task<string> GetCurrentTokenInfo(CancellationToken cancellationToken)
+    {
+        HttpClient client = await clientProvider.Get(cancellationToken);
+        return await client.GetStringAsync("/v2/self", cancellationToken);
+    }
+}
+```
+
+Use `AddAttioOpenApiHttpClientAsScoped()` when the wrapper itself should be scoped. Both registrations use the shared HTTP client cache underneath.
+
+## Behavior
+
+- `Get()` returns the cached `HttpClient`; it does not create a client per request.
+- The cache key is shared by all `AttioOpenApiHttpClient` instances in the process.
+- Configuration is applied when the cached client is first created. Changing configuration afterward does not rebuild it.
+- Disposing the wrapper removes its client from the shared cache. Avoid disposing a wrapper obtained from DI manually.
+- A missing `Attio:ApiKey` causes client creation to fail instead of producing an unauthenticated client.
+
+For the generated, strongly typed Attio API surface, use `Soenneker.Attio.OpenApiClient` or the DI-oriented `Soenneker.Attio.OpenApiClientUtil` package.
