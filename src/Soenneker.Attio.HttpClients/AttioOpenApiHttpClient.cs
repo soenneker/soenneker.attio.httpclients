@@ -11,7 +11,6 @@ using Soenneker.Utils.HttpClientCache.Abstract;
 
 namespace Soenneker.Attio.HttpClients;
 
-/// <inheritdoc cref="IAttioOpenApiHttpClient"/>
 public sealed class AttioOpenApiHttpClient : IAttioOpenApiHttpClient
 {
     private readonly IHttpClientCache _httpClientCache;
@@ -47,11 +46,12 @@ public sealed class AttioOpenApiHttpClient : IAttioOpenApiHttpClient
 
     public void Dispose()
     {
-        _httpClientCache.RemoveSync(nameof(AttioOpenApiHttpClient));
+        // The singleton cache owns the named client. A scoped provider must not remove it.
     }
 
     public ValueTask DisposeAsync()
     {
-        return _httpClientCache.Remove(nameof(AttioOpenApiHttpClient));
+        // Kept for API compatibility; the singleton cache owns the named client.
+        return ValueTask.CompletedTask;
     }
 }

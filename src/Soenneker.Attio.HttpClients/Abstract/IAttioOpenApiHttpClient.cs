@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using System.Threading;
 namespace Soenneker.Attio.HttpClients.Abstract;
 /// <summary>
-/// A .NET thread-safe singleton HttpClient for 
+/// Provides the cached, authenticated <see cref="HttpClient"/> used by the Attio OpenAPI client.
 /// </summary>
 public interface IAttioOpenApiHttpClient: IDisposable, IAsyncDisposable
 {

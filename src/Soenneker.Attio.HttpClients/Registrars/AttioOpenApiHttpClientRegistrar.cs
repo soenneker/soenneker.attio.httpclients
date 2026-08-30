@@ -11,7 +11,7 @@ namespace Soenneker.Attio.HttpClients.Registrars;
 public static class AttioOpenApiHttpClientRegistrar
 {
     /// <summary>
-    /// Adds <see cref="AttioOpenApiHttpClient"/> as a singleton service. <para/>
+    /// Adds <see cref="IAttioOpenApiHttpClient"/> as a singleton service backed by the singleton HTTP-client cache.
     /// </summary>
     /// <param name="services">Service collection that receives the registration.</param>
     /// <returns>The same service collection, so additional registrations can be chained.</returns>
@@ -24,7 +24,7 @@ public static class AttioOpenApiHttpClientRegistrar
     }
 
     /// <summary>
-    /// Adds <see cref="AttioOpenApiHttpClient"/> as a scoped service. <para/>
+    /// Adds <see cref="IAttioOpenApiHttpClient"/> as a scoped service backed by the singleton HTTP-client cache.
     /// </summary>
     /// <param name="services">Service collection that receives the registration.</param>
     /// <returns>The same service collection, so additional registrations can be chained.</returns>
