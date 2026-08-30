@@ -58,7 +58,7 @@ Use `AddAttioOpenApiHttpClientAsScoped()` when the wrapper itself should be scop
 - `Get()` returns the cached `HttpClient`; it does not create a client per request.
 - The cache key is shared by all `AttioOpenApiHttpClient` instances in the process.
 - Configuration is applied when the cached client is first created. Changing configuration afterward does not rebuild it.
-- Disposing a scoped wrapper does not remove the client owned by the shared singleton cache.
+- Disposing the wrapper removes and disposes its named client from the shared cache. Avoid disposing a wrapper obtained from DI manually.
 - A missing `Attio:ApiKey` causes client creation to fail instead of producing an unauthenticated client.
 
 For the generated, strongly typed Attio API surface, use `Soenneker.Attio.OpenApiClient` or the DI-oriented `Soenneker.Attio.OpenApiClientUtil` package.

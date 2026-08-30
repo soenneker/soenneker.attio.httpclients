@@ -46,12 +46,11 @@ public sealed class AttioOpenApiHttpClient : IAttioOpenApiHttpClient
 
     public void Dispose()
     {
-        // The singleton cache owns the named client. A scoped provider must not remove it.
+        _httpClientCache.RemoveSync(nameof(AttioOpenApiHttpClient));
     }
 
     public ValueTask DisposeAsync()
     {
-        // Kept for API compatibility; the singleton cache owns the named client.
-        return ValueTask.CompletedTask;
+        return _httpClientCache.Remove(nameof(AttioOpenApiHttpClient));
     }
 }
