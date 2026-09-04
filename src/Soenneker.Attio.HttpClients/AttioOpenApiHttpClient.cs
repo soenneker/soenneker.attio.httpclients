@@ -11,6 +11,7 @@ using Soenneker.Utils.HttpClientCache.Abstract;
 
 namespace Soenneker.Attio.HttpClients;
 
+/// <inheritdoc cref="IAttioOpenApiHttpClient" />
 public sealed class AttioOpenApiHttpClient : IAttioOpenApiHttpClient
 {
     private readonly IHttpClientCache _httpClientCache;
