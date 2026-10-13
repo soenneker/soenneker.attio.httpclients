@@ -29,7 +29,7 @@ public sealed class AttioOpenApiHttpClient : IAttioOpenApiHttpClient
     {
         return _httpClientCache.Get(nameof(AttioOpenApiHttpClient), (config: _config, baseUrl: _config["Attio:ClientBaseUrl"] ?? _prodBaseUrl), static state =>
         {
-            var apiKey = state.config.GetValueStrict<string>("Attio:ApiKey");
+            var apiKey = state.config.GetStringStrict("Attio:ApiKey");
             string authHeaderName = state.config["Attio:AuthHeaderName"] ?? "Authorization";
             string authHeaderValueTemplate = state.config["Attio:AuthHeaderValueTemplate"] ?? "Bearer {token}";
             string authHeaderValue = authHeaderValueTemplate.Replace("{token}", apiKey, StringComparison.Ordinal);
